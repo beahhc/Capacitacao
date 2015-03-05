@@ -6,8 +6,8 @@ import cor.CorRepositoryInMemory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import pessoas.PessoaRepository;
-import pessoas.PessoaRepositoryInMemory;
+import br.unicesumar.escoladeti2015base.pessoas.PessoaRepository;
+import br.unicesumar.escoladeti2015base.pessoas.PessoaRepositoryInMemory;
 
 @SpringBootApplication
 public class Application {
