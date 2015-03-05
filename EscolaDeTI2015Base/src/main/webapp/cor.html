@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html ng-app="app">
+    <head>
+        <title>Oi cor</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="angular.min.js"></script>
+    </head>
+    <body ng-controller="CorController">
+        <input type="text" ng-model="cor.id"/> Codigo
+        <br>
+        <input type="text" ng-model="cor.nome"/> Cor 
+        <br>
+        <button type="button" ng-click="salvar()"> Salvar </button>
+        <button type="button" ng-click="atualizar()"> atualizar </button>
+        
+        <table>
+             <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>cor</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="c in cores">
+                    <td>{{c.id}}</td>
+                    <td>{{c.nome}}</td>
+                    <td>
+                        <a href="#" ng-click="excluir(c)">Excluir</a>
+                        <a href="#" ng-click="alterar(c)">Alterar</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+    </body>
+</html>
+
+<script>
+    module = angular.module("app",[]);
+    module.controller("CorController",["$scope","$http",function($scope,$http){
+           function novo(){
+               $scope.cor={
+                   id : "",
+                   nome: ""
+               };
+               $scope.isNovo = true;
+           }
+           
+           novo();
+           
+           $scope.salvar = function(){
+              if($scope.cor.id.length == 0){
+                  alert("Coloque o id");
+                  return; 
+                 }  
+              if($scope.isNovo){
+                  $http.post("/cores",$scope.cor)
+                          .success(function(){
+                           alert("sucesso");
+                           $scope.atualizar();
+                           novo();
+                  }).error(deuErro);
+              }else{
+                  $http.put("/cores/"+$scope.cor.id, $scope.cor )
+                          .success(function(){
+                              alert("Deu certo fi, comemora, atualizou a cor");
+                              $scope.atualizar();
+                              novo();
+                              
+                  }).error(deuErro);
+              }
+           };
+           
+           $scope.atualizar = function(){
+               $http.get("/cores")
+                       .success(function(data){
+                           $scope.cores = data;
+               }).error(deuErro);  
+           };
+           
+           function deuErro(){
+               alert("Deu errado aí fi, se vira");
+           }
+           
+           $scope.excluir = function (cor){
+               $http.delete("/cores/"+cor.id)
+                        .success(function(){
+                            alert("cor excluida");
+                            $scope.atualizar();
+                        }).error(deuErro);
+           };
+           
+            $scope.alterar = function(cor) {
+                $scope.cor = angular.copy(cor);
+                $scope.isNovo = false;
+            };
+            
+    }]);    
+
+</script>

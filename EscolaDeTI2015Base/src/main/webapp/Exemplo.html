@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html ng-app="app">
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script src="angular.min.js"></script>
+    </head>
+    <body ng-controller="PaisController">
+        <input type="text" ng-model="texto"/>
+        {{texto}}
+
+        <button type="button" ng-click="acao()"> Ação </button>
+    </body>
+</html>
+
+<script>
+
+    module = angular.module("app", []);
+
+    module.controller("PaisController", ["$scope", function($scope) {
+
+            $scope.acao = function() {
+                alert($scope.texto);
+            };
+            
+        }]);
+</script>

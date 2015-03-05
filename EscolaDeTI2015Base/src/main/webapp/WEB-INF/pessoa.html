@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html ng-app="app">
+    <head>
+        <title>Pessoa</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="angular.min.js"></script>
+    </head>
+    <body ng-controller="PessoaController">
+        <input type="text" ng-model="pessoa.id"/> ID
+        <br>
+        <input type="text" ng-model="pessoa.nome"/> Nome 
+        <br>
+        <input type="text" ng-model="pessoa.sobrenome"/> Sobrenome 
+        <br>
+        <input type="text" ng-model="pessoa.idade"/> Idade 
+        <br>
+        <button type="button" ng-click="salvar()"> Salvar </button>
+        <button type="button" ng-click="atualizar()"> atualizar </button>
+        
+        <table>
+             <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Sobrenome</th>
+                    <th>Idade</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="p in pessoas">
+                    <td>{{p.id}}</td>
+                    <td>{{p.nome}}</td>
+                    <td>{{p.sobrenome}}</td>
+                    <td>{{p.idade}}</td>
+                    <td>
+                        <a href="#" ng-click="excluir(p)">Excluir</a>
+                        <a href="#" ng-click="alterar(p)">Alterar</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+    </body>
+</html>
+
+<script>
+    module = angular.module("app",[]);
+    module.controller("PessoaController",["$scope","$http",function($scope,$http){
+           function novo(){
+               $scope.pessoa={
+                   id : "",
+                   nome: "",
+                   sobrenome:"",
+                   idade:""
+               };
+               $scope.isNovo = true;
+           }
+           
+           novo();
+           
+           $scope.salvar = function(){
+              if($scope.pessoa.id.length == 0){
+                  alert("Coloque o id");
+                  return; 
+                 }  
+              if($scope.isNovo){
+                  $http.post("/pessoas",$scope.pessoa)
+                          .success(function(){
+                           alert("sucesso");
+                           $scope.atualizar();
+                           novo();
+                  }).error(deuErro);
+              }else{
+                  $http.put("/pessoas/"+$scope.pessoa.id, $scope.pessoa )
+                          .success(function(){
+                              alert("Deu certo fi, comemora, atualizou a pessoa");
+                              $scope.atualizar();
+                              novo();
+                              
+                  }).error(deuErro);
+              }
+           };
+           
+           $scope.atualizar = function(){
+               $http.get("/pessoas")
+                       .success(function(data){
+                           $scope.pessoas = data;
+               }).error(deuErro);  
+           };
+           
+           function deuErro(){
+               alert("Deu errado aí fi, se vira");
+           }
+           
+           $scope.excluir = function (cor){
+               $http.delete("/pessoas/"+cor.id)
+                        .success(function(){
+                            alert("Pessoa excluida");
+                            $scope.atualizar();
+                        }).error(deuErro);
+           };
+           
+            $scope.alterar = function(pessoa) {
+                $scope.pessoa = angular.copy(pessoa);
+                $scope.isNovo = false;
+            };
+            
+    }]);    
+
+</script>
